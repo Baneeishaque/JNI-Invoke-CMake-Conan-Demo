@@ -26,14 +26,11 @@ JNIEnv *create_vm(JavaVM **jvm) {
 
 int main() {
 
-    printf("hai");
     JNIEnv *env;
     JavaVM *jvm;
     env = create_vm(&jvm);
     if (env == NULL) {
-        printf("not ok");
         return 1;
     }
-    printf("ok");
     return 0;
 }
