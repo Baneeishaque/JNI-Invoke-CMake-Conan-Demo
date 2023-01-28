@@ -14,3 +14,4 @@ rm conanbuildinfo.txt
 rm conanfile.txt
 rm conaninfo.txt
 rm graph_info.json
+rm Makefile
