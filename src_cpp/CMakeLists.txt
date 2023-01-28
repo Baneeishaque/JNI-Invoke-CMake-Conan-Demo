@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25.1)
+cmake_minimum_required(VERSION 3.25.2)
 
 project(src_cpp)
 
@@ -25,6 +25,13 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE
         ${CONAN_LIBS})
 
-target_link_libraries(${PROJECT_NAME}
+if(WIN32)
+        target_link_libraries(${PROJECT_NAME}
         PRIVATE
         "${CONAN_ZULU-OPENJDK_ROOT}/lib/jvm.lib")
+
+else()
+        target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        "${CONAN_ZULU-OPENJDK_ROOT}/lib/server/libjvm.so")
+endif()
