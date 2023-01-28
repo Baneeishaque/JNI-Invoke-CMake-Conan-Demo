@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}",
+                "C:/Users/dk/.conan/data/zulu-openjdk/11.0.15/_/_/package/ca33edce272a279b24f87dc0d4cf5bbdcffbc187/include",
+                "C:/Users/dk/.conan/data/zulu-openjdk/11.0.15/_/_/package/ca33edce272a279b24f87dc0d4cf5bbdcffbc187/include/win32"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\Users\\dk\\.conan\\data\\mingw-builds\\12.2.0\\_\\_\\package\\6903a9d1b48b06f7fbe0929db654512c77e6cc32\\bin\\g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
