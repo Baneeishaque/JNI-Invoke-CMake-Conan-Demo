@@ -15,23 +15,11 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 conan_cmake_configure(REQUIRES zulu-openjdk/11.0.15
         GENERATORS cmake)
 conan_cmake_install(PATH_OR_REFERENCE .
-        BUILD missing)
+        BUILD missing
+        REMOTE artifactory)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        ${CONAN_LIBS})
-
-if(WIN32)
-        target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        "${CONAN_ZULU-OPENJDK_ROOT}/lib/jvm.lib")
-
-else()
-        target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        "${CONAN_ZULU-OPENJDK_ROOT}/lib/server/libjvm.so")
-endif()
+conan_target_link_libraries(${PROJECT_NAME})
