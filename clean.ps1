@@ -6,3 +6,4 @@ rm .\build.ninja
 rm .\.ninja_log
 rm .\.ninja_deps
 rm -r .\CMakeFiles\
+rm -r .\cmake-build-debug\
