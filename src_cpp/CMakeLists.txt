@@ -4,6 +4,10 @@ project(src_cpp)
 
 set(CMAKE_CXX_STANDARD 23)
 
+set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
+set(CMAKE_MESSAGE_CONTEXT_SHOW TRUE)
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
+
 if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
@@ -16,7 +20,8 @@ conan_cmake_configure(REQUIRES zulu-openjdk/11.0.15
         GENERATORS cmake)
 conan_cmake_install(PATH_OR_REFERENCE .
         BUILD missing
-        REMOTE artifactory)
+        # REMOTE artifactory
+        )
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
