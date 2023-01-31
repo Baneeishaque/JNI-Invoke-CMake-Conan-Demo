@@ -27,15 +27,21 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 add_executable(${PROJECT_NAME} main.cpp)
-conan_target_link_libraries(${PROJECT_NAME})
+# conan_target_link_libraries(${PROJECT_NAME})
+
+# if(WIN32)
+#         target_link_libraries(${PROJECT_NAME}
+#         PRIVATE
+#         "${CONAN_ZULU-OPENJDK_ROOT}/lib/jvm.lib")
+
+# else()
+#         target_link_libraries(${PROJECT_NAME}
+#         PRIVATE
+#         "${CONAN_ZULU-OPENJDK_ROOT}/lib/server/libjvm.so")
+# endif()
 
 if(WIN32)
-        target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        "${CONAN_ZULU-OPENJDK_ROOT}/lib/jvm.lib")
-
-else()
-        target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        "${CONAN_ZULU-OPENJDK_ROOT}/lib/server/libjvm.so")
+        set(JAVA_HOME ${CONAN_ZULU-OPENJDK_ROOT})
+        file(GLOB JDK_FILES "${JAVA_HOME}/*")
+        file(COPY ${JDK_FILES} DESTINATION bin/jre)
 endif()
