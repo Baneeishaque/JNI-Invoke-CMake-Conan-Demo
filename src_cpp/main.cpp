@@ -19,6 +19,7 @@ typedef jint(JNICALL *CreateJavaVM)(JavaVM **, void **, void *);
 
 void createJVM(JavaVM *&jvm, JNIEnv *&env);
 void loadJvmDll(CreateJavaVM *createJavaVM);
+int testCustomJavaMethod(JNIEnv *env, const char *classPath1, const char *className, const char *methodName);
 
 // JNIEnv *create_vm(JavaVM **jvm) {
 
@@ -56,6 +57,7 @@ int main() {
     JNIEnv *env;
 
     createJVM(jvm, env);
+
 
     jvm->DestroyJavaVM();
     return 0;
@@ -103,4 +105,51 @@ void loadJvmDll(CreateJavaVM *createJavaVM) {
         printf("Error: %d\n", lastErrorCode);
     }
     *createJavaVM = (CreateJavaVM) GetProcAddress(jvmDll, "JNI_CreateJavaVM");
+}
+
+int testCustomJavaMethod(JNIEnv *env, const char *classPath1, const char *className, const char *methodName) {
+    vector<string> classPath;
+    classPath.emplace_back(classPath1);
+
+    jclass urlClass = env->FindClass("java/net/URL");
+    jobjectArray urlArray = env->NewObjectArray(classPath.size(), urlClass, nullptr);
+
+    size_t i = 0;
+    for (const string &classPathURL : classPath) {
+        jstring urlStr = env->NewStringUTF(classPathURL.c_str());
+        jclass fileClass = env->FindClass("java/io/File");
+        jmethodID fileCtor = env->GetMethodID(fileClass, "<init>", "(Ljava/lang/String;)V");
+        jobject file = env->NewObject(fileClass, fileCtor, urlStr);
+        jmethodID toUriMethod = env->GetMethodID(fileClass, "toURI", "()Ljava/net/URI;");
+        jobject uri = env->CallObjectMethod(file, toUriMethod);
+        jclass uriClass = env->FindClass("java/net/URI");
+        jmethodID toUrlMethod = env->GetMethodID(uriClass, "toURL", "()Ljava/net/URL;");
+        jobject url = env->CallObjectMethod(uri, toUrlMethod);
+
+        env->SetObjectArrayElement(urlArray, i++, url);
+    }
+
+    jclass threadClass = env->FindClass("java/lang/Thread");
+    jmethodID threadGetCurrent = env->GetStaticMethodID(threadClass, "currentThread", "()Ljava/lang/Thread;");
+    jobject thread = env->CallStaticObjectMethod(threadClass, threadGetCurrent);
+    jmethodID threadGetLoader = env->GetMethodID(threadClass, "getContextClassLoader", "()Ljava/lang/ClassLoader;");
+    jobject contextClassLoader = env->CallObjectMethod(thread, threadGetLoader);
+    jclass urlClassLoaderClass = env->FindClass("java/net/URLClassLoader");
+    jmethodID urlClassLoaderCtor = env->GetMethodID(
+            urlClassLoaderClass,
+            "<init>",
+            "([Ljava/net/URL;Ljava/lang/ClassLoader;)V"
+    );
+    jobject urlClassLoader = env->NewObject(urlClassLoaderClass, urlClassLoaderCtor, urlArray, contextClassLoader);
+    jmethodID threadSetLoader = env->GetMethodID(threadClass, "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
+    env->CallVoidMethod(thread, threadSetLoader, urlClassLoader);
+    jmethodID loadClass = env->GetMethodID(urlClassLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    jstring mainClassNameUTF = env->NewStringUTF(className);
+    jobject mainClass = env->CallObjectMethod(urlClassLoader, loadClass, mainClassNameUTF);
+    jmethodID mainMethod = env->GetStaticMethodID((jclass) mainClass, methodName, "()V");
+
+    jobjectArray appArgs = env->NewObjectArray(0, env->FindClass("java/lang/String"), nullptr);
+    env->CallStaticVoidMethod((jclass) mainClass, mainMethod, appArgs);
+
+    return 0;
 }
