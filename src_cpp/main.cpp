@@ -1,6 +1,15 @@
+#ifdef __GNUC__
+  #define LINUX
+#else
+  #define WINDOWS
+#endif
+
+#ifdef WINDOWS
+  #include <Windows.h>
+#endif
+
 #include <iostream>
 #include <jni.h>
-#include <Windows.h>
 #include <vector>
 #include <string>
 
@@ -86,13 +95,12 @@ void loadJvmDll(CreateJavaVM *createJavaVM) {
             // load msvcr100.dll from the bundled JRE, then try again
             std::cout << "Failed to load jvm.dll. Trying to load msvcr100.dll first ..." << std::endl;
 
-            HINSTANCE hinstVCR = LoadLibrary("jre\\bin\\msvcr100.dll");
+            HINSTANCE hinstVCR = LoadLibrary("jre/bin/msvcr100.dll");
             if (hinstVCR != nullptr) {
                 jvmDll = LoadLibrary(jvmDLLPath);
             }
         }
         printf("Error: %d\n", lastErrorCode);
     }
-
     *createJavaVM = (CreateJavaVM) GetProcAddress(jvmDll, "JNI_CreateJavaVM");
 }
