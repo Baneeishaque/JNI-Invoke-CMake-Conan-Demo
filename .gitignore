@@ -790,3 +790,5 @@ FodyWeavers.xsd
 src_cpp/ZERO_CHECK.*
 src_cpp/src_cpp.*
 src_cpp/ALL_BUILD.*
+
+src_cpp/.conan/
