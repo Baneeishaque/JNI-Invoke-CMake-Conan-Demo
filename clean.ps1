@@ -8,7 +8,7 @@ rm .\.ninja_deps
 rm -r .\CMakeFiles\
 rm -r .\cmake-build-debug\
 rm -r .\bin\
-# rm -r .\lib\
+rm -r .\lib\
 rm -r .\src_cpp.dir\
 rm -r .\x64\
 rm .\ALL_BUILD.vcxproj*
